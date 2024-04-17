@@ -1,0 +1,825 @@
+#TANPHONG
+#Cau hinh Vlan & trunk
+#core1TP
+hostname Core-TP1
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+------------------------------
+hostname Core-TP2
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+------------------------------------
+#Distribution-TP1
+hostname Distribution-TP1
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+int range g1/0/1-4
+	switchport mode trunk
+	end
+write
+----------------------------------------
+#Distribution-TP2
+hostname Distribution-TP2
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+int range g1/0/1-4
+	switchport mode trunk
+	end
+write
+-------------------------------------
+#Access1-TP
+hostname Access-TP1
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+	
+int range g0/1-2
+	switchport mode trunk
+	exit
+int fa0/1
+	switchport mode access
+	switchport access vlan 20
+	exit
+int fa0/2
+	switchport mode trunk
+	end
+write
+-----------------------------------------
+#Access2-TP
+hostname Access-TP2
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+	
+int range g0/1-2
+	switchport mode trunk
+	exit
+int fa0/1
+	switchport access vlan 30
+	exit
+int fa0/2
+	switchport mode trunk
+	end
+write
+--------------------------------------------
+#Access3-TP
+hostname Access-TP3
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+	
+int range g0/1-2
+	switchport mode trunk
+	exit
+int range fa0/1-2
+	switchport mode access
+	switchport access vlan 20
+	exit
+int range fa0/3-4
+	switchport mode trunk
+	end
+write
+------------------------------------------
+hostname Access-TP4
+vlan 1
+	name Management
+	exit
+vlan 20
+	name Teacher
+	exit
+vlan 30
+	name Student
+	exit
+vlan 40
+	name IT
+	exit
+int range g0/1-2
+	switchport mode trunk
+	exit
+int fa0/1
+	switchport mode access
+	switchport access vlan 40
+	exit
+
+int range fa0/3-7
+	switchport mode access
+	switchport access vlan 40
+	end
+write
+--------------------------------------------
+#Cau hinh Spanning-Tree
+#Distribution-TP1
+spanning-tree mode rapid
+spanning-tree vlan 1 root primary
+spanning-tree vlan 20 root primary
+spanning-tree vlan 30 root secondary
+spanning-tree vlan 40 root secondary
+end
+write
+---------------------------------------------
+#Distribution-TP2
+spanning-tree mode rapid
+spanning-tree vlan 1 root secondary
+spanning-tree vlan 20 root secondary
+spanning-tree vlan 30 root primary
+spanning-tree vlan 40 root primary
+end
+write
+--------------------------------------------
+#Access-TP1
+spanning-tree mode rapid
+int fa0/1
+	spanning-tree portfast
+	spanning-tree bpduguard enable
+	exit
+int fa0/2	
+	spanning-tree portfast trunk
+	spanning-tree bpduguard enable
+	end
+write
+----------------------------
+#Access-TP2
+spanning-tree mode rapid
+int fa0/1
+	spanning-tree portfast
+	spanning-tree bpduguard enable
+	exit
+int fa0/2	
+	spanning-tree portfast trunk
+	spanning-tree bpduguard enable
+	end
+write
+-------------------------------
+#Access-TP3
+spanning-tree mode rapid
+int range fa0/1-2
+	spanning-tree portfast 
+	spanning-tree bpduguard enable
+	exit
+int range fa0/3-4
+	spanning-tree portfast trunk
+	spanning-tree bpduguard enable
+	end
+write
+--------------------------------
+#Access4-TP
+spanning-tree mode rapid
+int range fa0/1, fa0/3-7
+	spanning-tree portfast
+	spanning-tree bpduguard enable
+	exit
+int fa0/2	
+	spanning-tree portfast trunk
+	spanning-tree bpduguard enable
+	end
+write
+---------------------------------------
+#Cau hinh IP
+#Distribution-TP1
+int vlan 1
+	ip address 192.168.1.1  255.255.255.0
+	no shut
+	exit
+int vlan 20
+	ip address 192.168.2.1 255.255.255.0
+	no shut
+	exit
+int vlan 30
+	ip address 192.168.3.1 255.255.255.0
+	no shut 
+	exit
+int vlan 40 
+	ip address 192.168.4.1 255.255.255.0
+	no shut
+	exit
+
+int g1/0/20
+	no switchport
+	ip address 10.20.2.2 255.255.255.0
+	no shut
+	exit
+int g1/0/24
+	no switchport
+	ip address 10.50.1.2 255.255.255.0
+	no shut
+	exit
+int range g1/0/22-23
+	no switchport
+	channel-group 1 mode active
+	exit
+int po1
+	ip address 10.100.1.1 255.255.255.0
+	no shut
+	end
+write
+-------------------------------------------
+#Distribution-TP2
+int vlan 1
+	ip address 192.168.1.2  255.255.255.0
+	no shut
+	exit
+int vlan 20
+	ip address 192.168.2.2 255.255.255.0
+	no shut
+	exit
+int vlan 30
+	ip address 192.168.3.2 255.255.255.0
+	no shut 
+	exit
+int vlan 40 
+	ip address 192.168.4.2 255.255.255.0
+	no shut
+	exit
+
+int g1/0/20
+	no switchport
+	ip address 10.20.1.2 255.255.255.0
+	no shut
+	exit
+int g1/0/24
+	no switchport
+	ip address 10.60.1.2 255.255.255.0
+	no shut
+	exit
+int range g1/0/22-23
+	no switchport
+	channel-group 1 mode active
+	exit
+int po1
+	ip address 10.100.1.2 255.255.255.0
+	no shut
+	end
+write
+------------------------------------------------
+#Core-TP1
+int g1/0/1
+	no switchport
+	ip address 10.0.1.2 255.255.255.0
+	no shut
+	exit
+int g1/0/22
+	no switchport
+	ip address 10.10.0.1 255.255.255.0
+	no shut
+	exit
+int g1/0/20 
+	no switchport
+	ip address 10.20.1.1 255.255.255.0
+	no shut
+	exit
+int g1/0/24
+	no switchport
+	ip address 10.50.1.1 255.255.255.0
+	no shut
+	end
+write
+-------------------------------------------------
+#Core-TP2
+int g1/0/1
+	no switchport
+	ip address 10.0.2.2 255.255.255.0
+	no shut
+	exit
+int g1/0/22
+	no switchport
+	ip address 10.10.0.2 255.255.255.0
+	no shut
+	exit
+int g1/0/20 
+	no switchport
+	ip address 10.20.2.1 255.255.255.0
+	no shut
+	exit
+int g1/0/24
+	no switchport
+	ip address 10.60.1.1 255.255.255.0
+	no shut
+	end
+write
+----------------------------------------------------
+#Router TP
+hostname TP
+int g0/0/0
+	ip address 10.0.1.1 255.255.255.0
+	no shut
+	exit
+int g0/0/1
+	ip address 10.0.2.1 255.255.255.0
+	no shut
+	exit
+int se0/1/0
+	ip address 100.0.0.1 255.255.255.0
+	no shut
+	end
+write
+--------------------------------------------------
+#Dat dia chi tinh cho cac Server
+PC admin: DHCP
+DHCP: 192.168.4.10 255.255.255.0
+DNS: 192.168.4.50 255.255.255.0
+Web: 192.168.4.20 255.255.255.0
+Mail & FTP: 192.168.4.30 255.255.255.0
+Radius: 192.168.4.40 255.255.255.0
+----------------------------------------
+#Relay agent cho 2 Distribution-TP1-2
+DHCP: 192.168.4.10 255.255.255.0
+ip routing
+int vlan 1
+	ip helper-address 192.168.4.10
+	exit
+int vlan 20
+	ip helper-address 192.168.4.10
+	exit
+int vlan 30
+	ip helper-address 192.168.4.10
+	exit
+int vlan 40
+	ip helper-address 192.168.4.10
+	exit
+---------------------------------------------
+#Cau hinh HSRP
+#Cau hinh HSRP cho vlan 10, 20 cho Core 1
+int vlan 1
+	standby 1 ip 192.168.1.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track int g0/0/1
+	exit
+int vlan 20
+	standby 1 ip 192.168.2.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track int g0/0/1
+	exit
+int vlan 30
+	standby 1 ip 192.168.3.3 
+	standby 1 preempt 
+	exit
+int vlan 40
+	standby 1 ip 192.168.4.3 
+	standby 1 preempt 
+	end
+write
+-------------------------------------------------
+#Cau hinh HSRP cho vlan 30, 40 cho Core 2
+int vlan 1
+	standby 1 ip 192.168.1.3 
+	standby 1 preempt
+	exit
+int vlan 20
+	standby 1 ip 192.168.2.3 
+	standby 1 preempt
+	exit
+int vlan 30
+	standby 1 ip 192.168.3.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track g0/0/1
+	exit
+int vlan 40
+	standby 1 ip 192.168.4.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track g0/0/1
+	end
+write
+-------------------------------------------------
+#Cau hinh HSRP cho vlan 10, 20 cho Distribution-TP1
+int vlan 1
+	standby 1 ip 192.168.1.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track g1/0/20
+	standby 1 track g1/0/24
+	exit
+int vlan 20
+	standby 1 ip 192.168.2.3 
+	standby 1 priority 105
+	standby 1 preempt 
+	standby 1 track g1/0/20
+	standby 1 track g1/0/24
+	exit
+int vlan 30
+	standby 1 ip 192.168.3.3 
+	standby 1 preempt 
+	exit
+int vlan 40
+	standby 1 ip 192.168.4.3 
+	standby 1 preempt 
+	end
+write
+-----------------------------------------------
+#Cau hinh HSRP cho vlan 30, 40 cho Distribution-TP2
+int vlan 1
+	standby 1 ip 192.168.1.3
+	standby 1 preempt
+	exit
+int vlan 20
+	standby 1 ip 192.168.2.3 
+	standby 1 preempt
+	exit
+int vlan 30
+	standby 1 ip 192.168.3.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track g1/0/20
+	standby 1 track g1/0/24
+	exit
+int vlan 40
+	standby 1 ip 192.168.4.3 
+	standby 1 priority 105
+	standby 1 preempt
+	standby 1 track g1/0/20
+	standby 1 track g1/0/24
+	end
+write
+---------------------------------------------------
+#Dinh tuyen dong OSPF
+#TP
+router ospf 1
+	network 100.0.0.0 0.0.0.255 area 0
+	network 10.0.1.0 0.0.0.255 area 0
+	network 10.0.2.0 0.0.0.255 area 0
+	end
+write
+----------------------------
+#Cau hinh FrameRePlay
+#TP
+int s0/1/0
+	encap frame-relay
+	end
+write
+--------------------------
+#Core-TP1
+router ospf 1
+	network 10.0.0.0 0.255.255.255 area 0
+	end
+write
+-----------------------------
+#Core-TP2
+router ospf 1
+	network 10.0.0.0 0.255.255.255 area 0
+	end
+write
+------------------------------
+#Distribution-TP1
+router ospf 1
+	network 10.0.0.0 0.255.255.255 area 0
+	passive-interface vlan 1
+	passive-interface vlan 20
+	passive-interface vlan 30
+	passive-interface vlan 40
+	end
+write
+-------------------------------
+#Distribution-TP2
+router ospf 1
+	network 10.0.0.0 0.255.255.255 area 0
+	passive-interface vlan 1
+	passive-interface vlan 20
+	passive-interface vlan 30
+	passive-interface vlan 40
+	end
+write
+----------------------------------
+#Default route cho #TP, 2 Core-TP1-2, Distribution-TP1-2
+router ospf 1
+	default-information originate
+	end
+write
+-------------------------------------------------
+#NHATRANG
+#Cau hinh vlan & trunk
+#Core-NT
+hostname Core-NT
+vlan 10
+	name Teacher
+vlan 20
+	name Student
+	
+int g1/0/2
+	switchport mode trunk
+	end
+write
+----------------------------
+#Access-NT
+hostname Access-NT
+vlan 10
+	name Teacher
+vlan 20
+	name Student
+	exit
+
+int g0/1
+	switchport mode trunk
+	exit
+
+int fa0/1
+	switchport mode access 
+	switchport access vlan 10
+	exit
+
+int fa0/2
+	switchport mode access 
+	switchport access vlan 20
+	end
+write
+-----------------------------------
+#Cau hinh IP
+#R-NT
+hostname NT
+int s0/1/0
+	ip address 100.0.0.2 255.255.255.0
+	no shut
+	exit
+int g0/0/0
+	ip address 10.50.1.1 255.255.255.0
+	no shut
+	end
+write
+---------------------------
+#Core-NT
+int vlan 10
+	ip address 192.168.50.1 255.255.255.0
+	exit
+int vlan 20
+	ip address 192.168.60.1 255.255.255.0
+	exit
+	
+int g1/0/1
+	no switchport
+	ip address 10.50.1.2 255.255.255.0
+	end
+write
+------------------------------
+#Cau hinh FrameRePlay
+int s0/1/0
+	encap frame-relay
+	end
+write
+-----------------------------
+#Cau hinh OSPF
+#Core-NT
+ip routing
+router ospf 1
+	network 10.0.0.0 0.255.255.255 area 0
+	network 192.168.50.0 0.0.0.255 area 0
+	network 192.168.60.0 0.0.0.255 area 0
+	end
+write
+------------------------
+#Default route cho #NT va Core-NT
+router ospf 1
+	default-information originate
+	end
+write
+----------------------------
+int vlan 10
+	standby 1 ip 192.168.50.3 
+	standby 1 priority 105
+	standby 1 preempt
+	exit
+int vlan 20
+	standby 1 ip 192.168.60.3 
+	standby 1 preempt
+	exit
+------------------------------------------------------------------
+#BAO LOC
+#Cau hinh vlan & trunk
+#Core-BL
+hostname Core-BL
+vlan 10
+	name Teacher
+vlan 20
+	name Student
+	
+int g1/0/2
+	switchport mode trunk
+	end
+write
+-------------------------
+#Access-BL
+hostname Access-BL
+vlan 10
+	name Teacher
+vlan 20
+	name Student
+	exit
+
+int g0/1
+	switchport mode trunk
+	exit
+
+int fa0/1
+	switchport mode access 
+	switchport access vlan 10
+	exit
+
+int fa0/2
+	switchport mode access 
+	switchport access vlan 20
+	end
+write
+-----------------------------------
+#Cau hinh IP
+#R-BL
+hostname BL
+int s0/1/0
+	ip address 100.0.0.3 255.255.255.0
+	no shut
+	exit
+int g0/0/0
+	ip address 10.60.1.1 255.255.255.0
+	no shut
+	end
+write
+---------------------------
+#Core-BL
+int vlan 10
+	ip address 192.168.70.1 255.255.255.0
+	exit
+int vlan 20
+	ip address 192.168.80.1 255.255.255.0
+	exit
+	
+int g1/0/1
+	no switchport
+	ip address 10.60.1.2 255.255.255.0
+	end
+write
+------------------------------
+#Cau hinh FrameRePlay
+int s0/1/0
+	encap frame-relay
+	end
+write
+-----------------------------
+#Cau hinh OSPF
+#Core-NT
+ip routing
+router ospf 1
+	network 10.0.0.0 0.255.255.255 area 0
+	network 192.168.70.0 0.0.0.255 area 0
+	network 192.168.80.0 0.0.0.255 area 0
+	end
+write
+------------------------
+#Default route cho #NT va Core-NT
+router ospf 1
+	default-information originate
+	end
+write
+------------------------
+#iproute
+#Distribution-TP1-2
+ip route 0.0.0.0 0.0.0.0 g1/0/20
+ip route 0.0.0.0 0.0.0.0 g1/0/24
+----------------------------
+int vlan 10
+	standby 1 ip 192.168.70.3 
+	standby 1 priority 105
+	standby 1 preempt
+	exit
+int vlan 20
+	standby 1 ip 192.168.80.3 
+	standby 1 preempt
+	exit
+----------------------------------
+#Cau hinh Access-list tren Distribution-TP1-2
+ip access-list extended ACL
+#cho phép mạng teacher -> Server
+permit ip 192.168.2.0 0.0.0.255 192.168.4.0 0.0.0.255
+
+#cho phép mạng Student -> Server
+permit ip 192.168.3.0 0.0.0.255 192.168.4.0 0.0.0.255
+
+#cho phép mạng Management -> Server
+permit ip 192.168.1.0 0.0.0.255 192.168.4.0 0.0.0.255
+
+#chặn mạng 10, 20 vào mạng Management
+deny ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+deny ip 192.168.3.0 0.0.0.255 192.168.1.0 0.0.0.255
+permit ip any any
+
+-------------------------
+ip access-list extended ACL
+permit ip 192.168.2.0 0.0.0.255 192.168.4.0 0.0.0.255
+permit ip 192.168.3.0 0.0.0.255 192.168.4.0 0.0.0.255
+permit ip 192.168.1.0 0.0.0.255 192.168.4.0 0.0.0.255
+deny ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+deny ip 192.168.3.0 0.0.0.255 192.168.1.0 0.0.0.255
+permit ip any any
+
+int vlan 1
+	ip access-group ACL in
+	exit
+int vlan 20
+	ip access-group ACL in
+	exit
+int vlan 30
+	ip access-group ACL in
+	exit
+int vlan 40
+	ip access-group ACL in
+	end
+write
+--------------------------------------------------------
+#Cau hinh port Secutiry
+#Access-TP1
+interface range fa0/1-5
+switchport mode access
+switchport port-security
+switchport port-security maximum 3
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+------------------------------------------------
+#Access-TP2
+interface range fa0/1-5
+switchport mode access
+switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+-------------------------------------------------
+#Access-TP3
+interface range fa0/1-2
+switchport mode access
+switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+--------------------------------------------------
+#Access-TP4
+interface range fa0/1
+switchport mode access
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
